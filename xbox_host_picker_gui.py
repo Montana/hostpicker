@@ -27,6 +27,7 @@ import platform
 import queue
 import random
 import re
+import secrets
 import socket
 import subprocess
 import sys
@@ -154,6 +155,20 @@ def hostname_for(ip):
         return ""
 
 
+def _weighted_choice(pool, weights):
+    """Pick from pool using weights, backed by OS entropy (secrets.randbelow)."""
+    scale = 10_000
+    scaled = [max(1, round(w * scale)) for w in weights]
+    total = sum(scaled)
+    r = secrets.randbelow(total)
+    cumsum = 0
+    for item, w in zip(pool, scaled):
+        cumsum += w
+        if r < cumsum:
+            return item
+    return pool[-1]
+
+
 # ============================ drawing helpers =================================
 def round_rect(c, x1, y1, x2, y2, r, **kw):
     pts = [x1 + r, y1, x2 - r, y1, x2, y1, x2, y1 + r, x2, y2 - r, x2, y2,
@@ -242,6 +257,7 @@ class ConsoleCard:
         self.mac_var = tk.StringVar(value="")
         self.status_var = tk.StringVar(value="")
         self.base_status = ""
+        self.wins = 0
 
         self.frame = tk.Frame(parent, bg=PANEL)
         self.canvas = tk.Canvas(self.frame, width=self.CW, height=self.CH,
@@ -373,7 +389,10 @@ class ConsoleCard:
             self.status_var.set("off")
             self.status.configure(fg=DIM)
         else:
-            self.status_var.set(self.base_status)
+            parts = [self.base_status] if self.base_status else []
+            if self.wins > 0:
+                parts.append(f"×{self.wins} host")
+            self.status_var.set("  ·  ".join(parts))
             self.status.configure(fg=ACCENT)
 
     # ---- behavior ----
@@ -406,6 +425,7 @@ class App:
         self.root = root
         self.q = queue.Queue()
         self.spinning = False
+        self.last_winner_idx = None   # for no-repeat protection
 
         root.title("Halo System Link  -  Host Picker")
         root.configure(bg=BG)
@@ -536,12 +556,14 @@ class App:
         self.result.configure(text=f"Randomized lineup  ·  {live} in", fg=ACCENT)
 
     def on_clear(self):
+        self.last_winner_idx = None
         for i, card in enumerate(self.cards):
             card.name_var.set(f"Xbox {i + 1}")
             card.ip_var.set("")
             card.mac_var.set("")
             card.status_var.set("")
             card.base_status = ""
+            card.wins = 0
             card.enabled.set(True)
             card.reset_state()
         self.result.configure(text="Pick a host to begin", fg=DIM)
@@ -624,10 +646,21 @@ class App:
         for c in self.cards:
             c.reset_state()
         self.result.configure(text="Spinning...", fg=TEXT)
-        winner = random.choice(eligible)
 
-        # Build a randomized spin sequence (no consecutive repeats) that
-        # lands on the pre-chosen winner as the final step.
+        # No-repeat: exclude last host when other options exist
+        pool = [c for c in eligible if c.index != self.last_winner_idx]
+        if not pool:
+            pool = eligible
+
+        # Weighted selection via OS entropy: fewer past wins → higher odds
+        weights = [1.0 / (c.wins + 1) for c in pool]
+        winner = _weighted_choice(pool, weights)
+
+        # Record the win before animation starts
+        self.last_winner_idx = winner.index
+        winner.wins += 1
+
+        # Build randomized spin sequence (no consecutive repeats) ending on winner
         n = 20 + random.randint(0, len(eligible) * 3)
         sequence = []
         prev = None
