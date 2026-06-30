@@ -17,13 +17,21 @@ There are two programs in this project:
 
 ## Features
 
-- **Eight Xbox slots**, each drawn as a console with the green jewel logo and a
-  power LED. Click a console to toggle it in or out of the running.
-- **LAN scan** that auto-fills the slots with consoles it finds, using their
-  reverse-DNS name where available.
+- **Eight Xbox slots**, each drawn as an OG Xbox with a disc slot, 2×2
+  controller ports, layered green X jewel, and a glowing power LED. Click a
+  console to toggle it in or out of the running.
+- **LAN scan** that auto-fills the slots with consoles it finds, resolving
+  hostnames in the background so the UI never freezes.
 - **"Xbox only" filter** that flags devices by their Microsoft MAC prefix.
-- **Pick Host** — a roulette spin flashes through the eligible consoles, eases
-  out, and lands on a random winner (gold ring + `HOST` tag).
+- **Pick Host** — a roulette spin flashes through the eligible consoles in a
+  randomised order, eases out, and lands on a winner (gold ring + `★ HOST ★`).
+  The winner is chosen using OS entropy (`secrets`) before the animation
+  starts — the spin is purely cosmetic.
+- **Fair host selection** — consecutive picks are weighted so less-frequent
+  hosts are more likely to be chosen, and the same console is never picked
+  twice in a row (see [Host selection & fairness](#host-selection--fairness)).
+- **Win counter** — each card shows how many times that console has been host
+  this session (e.g. `×2 host`). Resets on **Clear**.
 - **Randomize** — randomly choose which consoles are in the running (always
   keeps at least two live), for randomly benching players between rounds.
 - **Manual mode** — ignore scanning entirely and just type eight names in.
@@ -128,6 +136,31 @@ Open either file and edit the constants near the top.
   read the MAC it reports, and add that prefix here. Prefixes are uppercase,
   colon-separated, e.g. `"00:22:48"`. You can verify a prefix against the
   [IEEE OUI registry](https://standards-oui.ieee.org/).
+
+---
+
+## Host selection & fairness
+
+When you hit **PICK HOST**, three things happen before the animation starts:
+
+1. **OS-entropy randomness.** The winner is drawn using Python's `secrets`
+   module (`secrets.randbelow()`), which pulls from the operating system's
+   cryptographically random source (`/dev/urandom` on Linux/macOS,
+   `CryptGenRandom` on Windows). This is unpredictable in a way that
+   `random.choice()` — seeded once at startup from a Mersenne Twister — is not.
+
+2. **No-repeat protection.** The console that was just host is excluded from
+   the draw, as long as at least one other eligible console exists. This prevents
+   the same Xbox from being host back-to-back.
+
+3. **Weighted fairness.** Each console's draw weight is `1 / (wins + 1)`, so a
+   console that has been host zero times has weight `1.0`, one time → `0.5`,
+   two times → `0.33`, and so on. The selection remains random — it's not a
+   strict round-robin — but it self-corrects over multiple rounds so one console
+   doesn't dominate.
+
+The win count shown on each card (`×2 host`) reflects the running tally for the
+current session. Hit **Clear** to reset everything and start fresh.
 
 ---
 
