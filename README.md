@@ -4,7 +4,7 @@ Randomly pick which Xbox should host a Halo **System Link** match. Built for the
 "host" is simply whichever console *creates* the game while the others join. This tool can't force a particular console to host, but it fairly settles the
 question of *who should* — find the consoles on your network (or type them in) and let it spin for a random pick.
 
-https://github.com/user-attachments/assets/1fca5176-fbe8-4e8a-b52e-bdea9a516dfe
+https://github.com/user-attachments/assets/cdb0786a-3d0b-4112-b15b-9c921fbbecf6
 
 There are two programs in this project:
 
