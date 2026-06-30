@@ -8,7 +8,7 @@ This tool can't force a particular console to host, but it fairly settles the
 question of *who should* — find the consoles on your network (or type them in)
 and let it spin for a random pick.
 
-![Screenshot of the GUI](xbox_gui_preview.png)
+<img width="800" height="700" alt="xbox_gui_preview" src="https://github.com/user-attachments/assets/119314c1-b769-481a-ac09-e91279285f19" />
 
 There are two programs in this project:
 
