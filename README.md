@@ -1,3 +1,5 @@
+<img width="941" height="941" alt="Untitled design - 2026-06-30T023945 786" src="https://github.com/user-attachments/assets/5d7432ed-4545-4592-8414-48c77919720c" />
+
 # Ringmaster: Randomize or Pick Host on Halo 2 / Halo 3 System Link.
 
 Randomly pick which Xbox should host a Halo **System Link** match. Built for the LAN era of **Halo 2** (original Xbox) and **Halo 3** (Xbox 360), where the
