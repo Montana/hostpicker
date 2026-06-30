@@ -1,26 +1,4 @@
 #!/usr/bin/env python3
-"""
-xbox_host_picker_gui.py
-=======================
-
-A desktop GUI that finds Xbox consoles on your LAN and randomly picks one to be
-the Halo System Link host -- Halo 2 (original Xbox) or Halo 3 (Xbox 360).
-
-Eight consoles are drawn as little Xboxes. Auto-fill them by scanning the LAN,
-or type names/IPs in by hand. Click a console to toggle it on/off. Hit
-"Pick Host" for a roulette-style spin that lights up a random eligible Xbox.
-
-Run:
-    python xbox_host_picker_gui.py
-
-Scanning notes:
-  * Most reliable with scapy:  pip install scapy   (run with sudo on Linux/mac)
-  * Without scapy it falls back to a ping sweep + your system ARP table.
-  * Consoles must be powered on and on the same switch. OG Xboxes sometimes
-    only appear once a System Link game (e.g. Halo 2's lobby) is loaded.
-
-Change NUM_SLOTS / COLUMNS below to lay out a different number of consoles.
-"""
 
 import ipaddress
 import platform
@@ -40,14 +18,12 @@ from tkinter import font as tkfont
 NUM_SLOTS = 8
 COLUMNS = 4
 
-# --- Microsoft / Xbox MAC OUI prefixes (first three octets). Edit freely. -----
 XBOX_OUIS = {
     "00:50:F2", "00:0D:3A", "00:12:5A", "00:15:5D", "00:17:FA", "00:1D:D8",
     "00:22:48", "00:25:AE", "60:45:BD", "7C:ED:8D", "98:5F:D3", "9C:AA:1B",
     "C8:3F:26",
 }
 
-# --- Theme --------------------------------------------------------------------
 BG     = "#080c0a"
 PANEL  = "#0d1610"
 ACCENT = "#4cff9f"
@@ -57,8 +33,6 @@ WIN    = "#ffd447"
 LED_ON = "#39ff14"
 SEP    = "#1e3528"
 
-
-# ============================== scan backend ==================================
 def normalize_mac(mac: str) -> str:
     mac = mac.replace("-", ":").strip().upper()
     return ":".join(p.zfill(2) for p in mac.split(":") if p != "")
