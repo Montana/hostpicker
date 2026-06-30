@@ -1,14 +1,10 @@
 # Halo System Link: Host Picker
 
-Randomly pick which Xbox should host a Halo **System Link** match. Built for
-the LAN era of **Halo 2** (original Xbox) and **Halo 3** (Xbox 360), where the
-"host" is simply whichever console *creates* the game while the others join.
+Randomly pick which Xbox should host a Halo **System Link** match. Built for the LAN era of **Halo 2** (original Xbox) and **Halo 3** (Xbox 360), where the
+"host" is simply whichever console *creates* the game while the others join. This tool can't force a particular console to host, but it fairly settles the
+question of *who should* — find the consoles on your network (or type them in) and let it spin for a random pick.
 
-This tool can't force a particular console to host, but it fairly settles the
-question of *who should* — find the consoles on your network (or type them in)
-and let it spin for a random pick.
-
-<img width="800" height="700" alt="xbox_gui_preview" src="https://github.com/user-attachments/assets/119314c1-b769-481a-ac09-e91279285f19" />
+https://github.com/user-attachments/assets/1fca5176-fbe8-4e8a-b52e-bdea9a516dfe
 
 There are two programs in this project:
 
@@ -156,3 +152,6 @@ current version (buttons are now custom-drawn). If you still see something off,
 grab a screenshot — rendering differs across platforms.
 
 ---
+Author
+---
+Michael Allen Mendy
